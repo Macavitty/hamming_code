@@ -35,17 +35,17 @@ void Coder::init() {
 }
 
 int Coder::count_control() {
-    cout << "Counted m_control: " << (log2(ceil(log2(m_data + 1)) + 1 + m_data)) << endl;
+    cout << "Counted control: " << (log2(ceil(log2(m_data + 1)) + 1 + m_data)) << endl;
     return ceil(log2(m_data + 1 + ceil(log2(m_data + 1))));
 }
 
 int Coder::count_data() {
-    cout << "Counted m_data: " << ceil(log2(m_messages)) << endl;
+    cout << "Counted data: " << ceil(log2(m_messages)) << endl;
     return ceil(log2(m_messages));
 }
 
 int Coder::count_total() {
-    cout << "Counted m_total: " << m_control + m_data << endl;
+    cout << "Counted total: " << m_control + m_data << endl;
     return m_control + m_data;
 }
 
@@ -65,25 +65,25 @@ void Coder::generate_bits() {
                 data_idx++;
             }
         }
-        bits.push_back(row);
+        m_bits.push_back(row);
 
 
         /*
-         * fill m_control bits
+         * fill control bits
          * */
         for (int r_idx = 1; r_idx < m_total; r_idx *= 2){
             int real_i = r_idx - 1;
-            unsigned bit = 0;
+            unsigned xor_res = 0;
             int group_ctr = 0;
             for (int j = r_idx - 1; j < m_total ; j++){
-                bit ^= bits[row_idx][j];
+                xor_res ^= m_bits[row_idx][j];
                 group_ctr++;
                 if (group_ctr == r_idx){
                     group_ctr = 0;
                     j += r_idx;
                 }
             }
-            bits[row_idx][real_i] = bit;
+            m_bits[row_idx][real_i] = xor_res;
         }
     }
 }
@@ -92,16 +92,16 @@ void Coder::generate_extras() {
     for (int i = 0; i < m_messages; i++){
         unsigned r = 0;
         for (int j = 0; j < m_messages; j++) {
-            r ^= bits[i][j];
+            r ^= m_bits[i][j];
         }
-        extra_controls.push_back(r);
+        m_extra_controls.push_back(r);
     }
 }
 
 vector<vector<bool>> Coder::get_messages() {
-    return bits;
+    return m_bits;
 }
 
 vector<bool> Coder::get_extra() {
-    return extra_controls;
+    return m_extra_controls;
 }

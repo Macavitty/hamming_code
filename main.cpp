@@ -1,5 +1,6 @@
 #include <iostream>
 #include "coder.h"
+#include "decoder.h"
 
 using namespace std;
 
@@ -57,17 +58,42 @@ int main() {
 
     vector<vector<bool>> msgs = coder.get_messages();
     vector<bool> extra = coder.get_extra();
+
     // cout
     cout << "Possible messages:" << endl;
     for (auto i = 0; i < msgs.size(); i++) {
         cout << i << ":\t [ ";
-        for (auto j = 0; j < msgs.size(); j++) {
+        for (auto j = 0; j < msgs[0].size(); j++) {
             cout << msgs[i][j] << " ";
         }
         if (extra.size() != 0) {
             cout << "] extra : " << extra[i];
         } else { cout << "]"; }
         cout << endl;
+    }
+
+    /*
+     * spoiling some bits:
+     * */
+    msgs[0][4] = 1; // i = 0: 0 -> 4
+    msgs[2][5] = 0; // i = 2: 2-> 0
+    msgs[15][2] = 0; // i = 2: 2-> 0
+    msgs[11][6] = 0; // i = 2: 2-> 0
+
+    /*
+     * and let decoder to fix it
+     * */
+    Decoder decoder;
+    vector<vector<bool>> decoded_msg = decoder.decode(3, msgs);
+    vector<int> syndromes = decoder.get_syndromes();
+    //cout
+    cout << "Decoded messages:" << endl;
+    for (auto i = 0; i < decoded_msg.size(); i++){
+        cout << i << ":\t[ ";
+        for (auto j = 0; j < decoded_msg[0].size(); j++){
+            cout <<  decoded_msg[i][j] << " ";
+        }
+        cout << "] syndrome: " << syndromes[i] << endl;
     }
     return 0;
 }

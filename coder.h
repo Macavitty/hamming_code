@@ -9,11 +9,11 @@ class Coder{
 private:
     int m_messages; // amount of possible messages
     int m_distance; // distance
-    int m_total = -1; // total number of bits
-    int m_control = -1; // control bits count
-    int m_data = -1; // data bits count
-    std::vector<std::vector<bool>> bits;
-    std::vector<bool> extra_controls;
+    int m_total = -1; // total number of m_bits
+    int m_control = -1; // control m_bits count
+    int m_data = -1; // data m_bits count
+    std::vector<std::vector<bool>> m_bits;
+    std::vector<bool> m_extra_controls;
     int count_control();
     int count_data();
     int count_total();
