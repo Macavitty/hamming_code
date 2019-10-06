@@ -6,36 +6,39 @@ inline bool is_pow_of_two(unsigned a) {
     return (a & (a - 1)) == 0;
 }
 
-vector<vector<bool>> Decoder::decode(int distance, vector<vector<bool>> messages) {
-    cout << "decode" << endl;
+vector<vector<bool>> Decoder::decode(int distance, const vector<vector<bool>> &messages) {
     m_fixed_bits = messages;
     if (distance == 3) return decode3(messages);
     if (distance == 4) return decode4(messages);
     return vector<vector<bool>>();
 }
 
-vector<vector<bool>> Decoder::decode3(vector<vector<bool>> messages) {
-    cout << "decode 3" << endl;
-    count_syndromes();
+vector<vector<bool>> Decoder::decode3(const vector<vector<bool>>& messages) {
+    count_syndromes(m_fixed_bits[0].size());
     fix();
     remove_controls();
     return m_fixed_bits;
 }
 
-vector<vector<bool>> Decoder::decode4(vector<vector<bool>> messages) {
-    cout << "decode 4\nreturns new vector" << endl;
-    return vector<vector<bool>>();
+vector<vector<bool>> Decoder::decode4(const vector<vector<bool>> &messages) {
+    count_syndromes(m_fixed_bits[0].size());
+    count_general_parity();
+    // fix if we can
+    for (auto i = 0; i < m_fixed_bits.size(); i++) {
+        if (m_syndromes[i]){
+            if (m_parities[i]) fix(i);
+        }
+    }
+    remove_controls();
+    return m_fixed_bits;
 }
 
 vector<int> Decoder::get_syndromes() {
-    cout << "get_syndromes" << endl;
-//    decode(distance, messages);
     return m_syndromes;
 }
 
-void Decoder::count_syndromes() {
-    cout << "count_syndromes" << endl;
-    int total = m_fixed_bits[0].size();
+void Decoder::count_syndromes(int t_bit_to_check) {
+    int total = t_bit_to_check;
     int msg_count = m_fixed_bits.size();
     for (int i = 0; i < msg_count; i++) {  // for all messages
         cout << "-- ROW " << i << " --" << endl;
@@ -64,20 +67,34 @@ void Decoder::count_syndromes() {
     }
 }
 
-void Decoder::fix() {
-    cout << "fix" << endl;
-    for (int i = 0; i < m_syndromes.size(); i++) {
-        cout << m_syndromes[i] << " ";
-    }
-    cout << endl;
-    for (auto i = 0; i < m_syndromes.size(); i++) {
-        if (m_syndromes[i]) {
-            bool bit = m_fixed_bits[i][m_syndromes[i] - 1];
-            bit = !bit;
-            m_fixed_bits[i][m_syndromes[i] - 1] = bit;
+void Decoder::count_general_parity() {
+    for (auto &row : m_fixed_bits) {
+        int parity = 0;
+        for (auto j = 0; j < m_fixed_bits[0].size(); j++) {
+            parity += row[j];
+
         }
+        parity %= 2;
+        m_parities.push_back(parity);
     }
 }
+
+
+void Decoder::fix() {
+    for (int i = 0; i < m_syndromes.size(); i++) {
+        fix(i);
+    }
+}
+
+void Decoder::fix(int row) {
+    if (m_syndromes[row]) {
+        bool bit = m_fixed_bits[row][m_syndromes[row] - 1];
+        bit = !bit;
+        m_fixed_bits[row][m_syndromes[row] - 1] = bit;
+    }
+
+}
+
 
 void Decoder::remove_controls() {
     cout << "remove_controls" << endl;
@@ -91,6 +108,9 @@ void Decoder::remove_controls() {
         m_fixed_bits.erase(m_fixed_bits.begin() + i); // replace() not found ¯\_(ツ)_/¯
         m_fixed_bits.insert(m_fixed_bits.begin() + i, new_row);
         new_row.clear();
-
     }
+}
+
+vector<bool> Decoder::get_parities() {
+    return m_parities;
 }

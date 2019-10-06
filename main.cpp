@@ -76,6 +76,7 @@ int main() {
      * spoiling some bits:
      * */
     msgs[0][4] = 1; // i = 0: 0 -> 4
+    msgs[0][6] = 1; // i = 0: 4 -> 6
     msgs[2][5] = 0; // i = 2: 2-> 0
     msgs[15][2] = 0; // i = 2: 2-> 0
     msgs[11][6] = 0; // i = 2: 2-> 0
@@ -84,8 +85,11 @@ int main() {
      * and let decoder to fix it
      * */
     Decoder decoder;
-    vector<vector<bool>> decoded_msg = decoder.decode(3, msgs);
+    vector<vector<bool>> decoded_msg = decoder.decode(distance, msgs);
     vector<int> syndromes = decoder.get_syndromes();
+    vector<bool> parities;
+    if (distance == 4)
+        parities = decoder.get_parities();
     //cout
     cout << "Decoded messages:" << endl;
     for (auto i = 0; i < decoded_msg.size(); i++){
@@ -93,7 +97,10 @@ int main() {
         for (auto j = 0; j < decoded_msg[0].size(); j++){
             cout <<  decoded_msg[i][j] << " ";
         }
-        cout << "] syndrome: " << syndromes[i] << endl;
+        cout << "]\tsyndrome: " << syndromes[i];
+        if (distance == 4){
+            cout << "\tparity: " << parities[i] << endl;
+        } else cout << endl;
     }
     return 0;
 }

@@ -6,10 +6,7 @@ inline bool is_pow_of_two(unsigned a) {
 }
 
 inline bool get_bit_on_position(unsigned num, unsigned pos) {
-//    cout << "Get bit" << endl;
-//    cout << "num: " << num << " pos: " << pos << endl;
     unsigned bit = (num >> pos) & 1;
-//    cout << "bit: " << bit << endl;
     return bit;
 }
 
@@ -29,24 +26,27 @@ void Coder::code() {
 }
 
 void Coder::init() {
-    m_data = count_data();
-    m_control = count_control();
-    m_total = count_total();
+    m_data = count_data(m_messages);
+    m_control = count_control(m_data, m_distance);
+    m_total = count_total(m_control, m_data);
 }
 
-int Coder::count_control() {
-    cout << "Counted control: " << (log2(ceil(log2(m_data + 1)) + 1 + m_data)) << endl;
-    return ceil(log2(m_data + 1 + ceil(log2(m_data + 1))));
+int Coder::count_control(int t_data, int t_distance) {
+    int c = ceil(log2(t_data + 1 + ceil(log2(t_data + 1))));
+    if (t_distance == 4)
+        c++;
+    cout << "Counted control: " << c << endl;
+    return c;
 }
 
-int Coder::count_data() {
-    cout << "Counted data: " << ceil(log2(m_messages)) << endl;
-    return ceil(log2(m_messages));
+int Coder::count_data(int t_msg_n) {
+    cout << "Counted data: " << ceil(log2(t_msg_n)) << endl;
+    return ceil(log2(t_msg_n));
 }
 
-int Coder::count_total() {
+int Coder::count_total(int t_control, int t_data) {
     cout << "Counted total: " << m_control + m_data << endl;
-    return m_control + m_data;
+    return t_control + t_data;
 }
 
 void Coder::generate_bits() {
@@ -95,6 +95,7 @@ void Coder::generate_extras() {
             r ^= m_bits[i][j];
         }
         m_extra_controls.push_back(r);
+        m_bits[i][m_total - 1] = r;
     }
 }
 

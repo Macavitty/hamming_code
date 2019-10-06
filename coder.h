@@ -14,9 +14,9 @@ private:
     int m_data = -1; // data m_bits count
     std::vector<std::vector<bool>> m_bits;
     std::vector<bool> m_extra_controls;
-    int count_control();
-    int count_data();
-    int count_total();
+    int count_control(int t_data, int t_distance);
+    int count_data(int t_msg_n);
+    int count_total(int t_control, int t_data);
     void init();
     void generate_bits();
     void generate_extras();
