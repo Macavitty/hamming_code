@@ -41,15 +41,12 @@ void Decoder::count_syndromes(int t_bit_to_check) {
     int total = t_bit_to_check;
     int msg_count = m_fixed_bits.size();
     for (int i = 0; i < msg_count; i++) {  // for all messages
-        cout << "-- ROW " << i << " --" << endl;
         unsigned syndrome = 0;
         unsigned high_bit_idx = 0;
         for (int r_idx = 1; r_idx < total; r_idx *= 2) { // for each control bit in message
-            cout << "r: " << r_idx << endl << "xor:\n";
             unsigned xor_res = 0;
             int group_ctr = 0;
             for (int j = r_idx - 1; j < total; j++) { // get all bits (controls and data) that form Sj
-                cout << "j: " << j << " xor_res: " << xor_res << " bit_to_add: " << m_fixed_bits[i][j] << endl;
                 xor_res ^= m_fixed_bits[i][j];
                 group_ctr++;
                 if (group_ctr == r_idx) {
@@ -57,10 +54,8 @@ void Decoder::count_syndromes(int t_bit_to_check) {
                     j += r_idx;
                 }
             }
-            cout << "high: " << high_bit_idx << endl;
             xor_res <<= high_bit_idx;
             syndrome |= xor_res;
-            cout << "syndrome: " << syndrome << endl;
             high_bit_idx++;
         }
         m_syndromes.push_back(syndrome);
@@ -97,7 +92,6 @@ void Decoder::fix(int row) {
 
 
 void Decoder::remove_controls() {
-    cout << "remove_controls" << endl;
     auto msg_cnt = m_fixed_bits[0].size();
     vector<bool> new_row;
     for (auto i = 0; i < m_fixed_bits.size(); i++) {

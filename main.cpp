@@ -69,17 +69,18 @@ int main() {
         if (extra.size() != 0) {
             cout << "] extra : " << extra[i];
         } else { cout << "]"; }
-        cout << endl;
+        cout  << endl;
     }
 
     /*
      * spoiling some bits:
      * */
-//    msgs[0][4] = 1; // i = 0: 0 -> 4
+//    msgs[1][5] = 1; // i = 0: 0 -> 4
 //    msgs[0][6] = 1; // i = 0: 4 -> 6
-//    msgs[2][5] = 0; // i = 2: 2-> 0
-//    msgs[15][2] = 0; // i = 2: 2-> 0
-//    msgs[11][6] = 0; // i = 2: 2-> 0
+//    msgs[0][4] = 1; // i = 0: 4 -> 6
+//    msgs[5][4] = 0; // i = 2: 2-> 0
+//    msgs[8][0] = 0; // i = 2: 2-> 0
+//    msgs[5][6] = 0; // i = 2: 2-> 0
 
     /*
      * and let decoder to fix it
@@ -99,8 +100,8 @@ int main() {
         }
         cout << "]\tsyndrome: " << syndromes[i];
         if (distance == 4){
-            cout << "\tparity: " << parities[i] << endl;
-        } else cout << endl;
+            cout << "\tparity: " << parities[i]  << endl;
+        } else cout  << endl;
     }
     return 0;
 }
